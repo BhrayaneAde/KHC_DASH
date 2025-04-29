@@ -93,7 +93,6 @@ export const updateUserInfos = (userId, userData) => {
 export const registerUser = (userData) => {
   return axios.post(`${apiUrl}/auth/register`, userData);
 };
-
 // Connexion d'un utilisateur (email ou username détecté automatiquement)
 export const loginUser = async (loginInput, password) => {
   const isEmail = loginInput.includes('@');
@@ -103,11 +102,11 @@ export const loginUser = async (loginInput, password) => {
 
   const formData = new FormData();
   formData.append('grant_type', 'password');
-  formData.append('username', loginInput);
+  formData.append(isEmail ? 'email' : 'username', loginInput);
   formData.append('password', password);
   formData.append('scope', '');
-  formData.append('client_id', 'string');        // à modifier si nécessaire
-  formData.append('client_secret', 'string');    // à modifier si nécessaire
+  formData.append('client_id', 'string');
+  formData.append('client_secret', 'string');
 
   try {
     const response = await axios.post(url, formData, {
@@ -117,17 +116,6 @@ export const loginUser = async (loginInput, password) => {
     });
 
     console.log('Connexion réussie :', response.data);
-
-    // Vérification du rôle utilisateur
-    const user = response.data.user;
-    const role = user?.role || response.data.role;
-
-    if (!role) {
-      console.error('❌ Aucun rôle reçu du serveur.');
-    } else {
-      console.log('✅ Rôle utilisateur :', role);
-    }
-
     return response.data;
 
   } catch (error) {

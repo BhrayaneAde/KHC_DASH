@@ -120,35 +120,18 @@ async function login() {
   try {
     const response = await loginUser(loginInput.value, passwordInput.value);
 
-    const { token, role } = response.data;
+    const { token } = response.data;
 
     localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
 
     errorMessage.value = '';
 
-    // Redirection en fonction du rôle
-    if (role === 'admin') {
-      router.push('/admin');
-    } else if (role === 'user') {
-      router.push('/user');
-    } else if (role === 'deleted_user') {
-      router.push('/deleted');
-    } else if (role === 'suspended_user') {
-      router.push('/suspended');
-    } else if (role) {
-      // Si un rôle inconnu est retourné
-      console.warn(`Rôle inconnu : ${role}`);
-      router.push('/');
-    } else {
-      // Si aucun rôle n'est retourné
-      console.error('Aucun rôle reçu du serveur.');
-      router.push('/login'); // On pourrait rediriger vers login
-    }
-    // Reset les champs
-    loginInput.value = ''
-    passwordInput.value = ''
+    // Redirection vers la page admin
+    router.push('/admin');
 
+    // Reset les champs
+    loginInput.value = '';
+    passwordInput.value = '';
   } catch (error) {
     console.error(error);
     if (error.response && error.response.data && error.response.data.message) {

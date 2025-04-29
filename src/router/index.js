@@ -33,10 +33,6 @@ const router = createRouter({
           component: DashboardView,
           children: [
             {
-              path: '/roles',
-              component: RolesApp,
-            },
-            {
               path: '/users',
               component: Utilisateurs,
             },
@@ -73,8 +69,18 @@ const pinia = createPinia()
 
 // Garde globale de navigation
 router.beforeEach((to, from, next) => {
-  // Désactiver temporairement la vérification d'authentification
-  next()
-})
+  const authStore = useAuthStore(pinia); // Accéder au store d'authentification
+  const token = localStorage.getItem('token'); // Vérifier la présence du token dans le localStorage
+
+  if (!token && to.path !== '/login') {
+    // Si l'utilisateur n'est pas authentifié et essaie d'accéder à une autre page que /login
+    next('/login'); // Rediriger vers la page de connexion
+  } else {
+    next(); // Autoriser la navigation
+  }
+});
+
 
 export default router
+
+
