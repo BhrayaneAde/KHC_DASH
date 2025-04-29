@@ -102,7 +102,8 @@ export const loginUser = async (loginInput, password) => {
 
   const formData = new FormData();
   formData.append('grant_type', 'password');
-  formData.append(isEmail ? 'email' : 'username', loginInput);
+  //formData.append(isEmail ? 'email' : 'username', loginInput); //formData.append('username', loginInput);
+  formData.append('username', loginInput);
   formData.append('password', password);
   formData.append('scope', '');
   formData.append('client_id', 'string');

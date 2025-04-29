@@ -120,10 +120,6 @@ async function login() {
   try {
     const response = await loginUser(loginInput.value, passwordInput.value);
 
-    const { token } = response.data;
-
-    localStorage.setItem('token', token);
-
     errorMessage.value = '';
 
     // Redirection vers la page admin
