@@ -95,30 +95,56 @@ export const registerUser = (userData) => {
 };
 
 // Connexion d'un utilisateur (email ou username détecté automatiquement)
-export const loginUser = (loginInput, password) => {
+export const loginUser = async (loginInput, password) => {
   const isEmail = loginInput.includes('@');
   const url = isEmail
     ? `${apiUrl}/auth/login_with_email`
     : `${apiUrl}/auth/login_with_username`;
 
-  const payload = {
-    grant_type: 'password',
-    client_id: 'your-client-id',       // A modifier selon ton vrai client ID
-    client_secret: 'your-client-secret', // Idem ici
-    scope: 'your-scope',
-    password: password,
-  };
+  const formData = new FormData();
+  formData.append('grant_type', 'password');
+  formData.append('username', loginInput);
+  formData.append('password', password);
+  formData.append('scope', '');
+  formData.append('client_id', 'string');        // à modifier si nécessaire
+  formData.append('client_secret', 'string');    // à modifier si nécessaire
 
-  if (isEmail) {
-    payload.email = loginInput;
-  } else {
-    payload.username = loginInput;
+  try {
+    const response = await axios.post(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log('Connexion réussie :', response.data);
+
+    // Vérification du rôle utilisateur
+    const user = response.data.user;
+    const role = user?.role || response.data.role;
+
+    if (!role) {
+      console.error('❌ Aucun rôle reçu du serveur.');
+    } else {
+      console.log('✅ Rôle utilisateur :', role);
+    }
+
+    return response.data;
+
+  } catch (error) {
+    console.error('Erreur lors de la connexion :', error.response?.data || error.message);
+    throw error;
   }
-
-  return axios.post(url, payload);
 };
 
-// Déconnexion
+// Récupérer le token d'authentification
+export const getAuthToken = () => {
+  return localStorage.getItem('token');
+};
+// Récupérer le rôle de l'utilisateur
+export const getUserRole = () => {
+  return localStorage.getItem('role');
+};
+
 export const logoutUser = () => {
   localStorage.removeItem('token');
   localStorage.removeItem('role');
