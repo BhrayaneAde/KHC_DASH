@@ -2,6 +2,11 @@
   <div class="p-6">
     <h1 class="text-2xl font-bold mb-4">Gestion des Utilisateurs</h1>
 
+    <!-- Message d'erreur -->
+    <div v-if="errorMessage" class="bg-red-100 text-red-700 px-4 py-3 rounded mb-4">
+      {{ errorMessage }}
+    </div>
+
     <!-- Utilisateurs actifs -->
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">Utilisateurs Actifs</h2>
@@ -111,14 +116,26 @@ import {
 } from '@/services/api.js';
 
 const users = ref([]);
+const errorMessage = ref('');
 
-// Charger les utilisateurs
+// Charger les utilisateurs avec gestion d'erreur
 const loadUsers = async () => {
   try {
     const response = await getUsers();
     users.value = response.data;
+    errorMessage.value = '';
   } catch (error) {
     console.error('Erreur lors du chargement des utilisateurs', error);
+
+    if (error.response?.status === 401) {
+      errorMessage.value = "Session expirée. Redirection en cours...";
+      localStorage.removeItem('access_token');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
+    } else {
+      errorMessage.value = "Une erreur est survenue lors du chargement des utilisateurs.";
+    }
   }
 };
 
