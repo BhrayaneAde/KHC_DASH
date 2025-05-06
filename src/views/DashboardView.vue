@@ -8,16 +8,16 @@ import FooterApp from '@/components/FooterApp.vue';
 <template>
   <div class="flex flex-col h-screen">
     <HeaderApp />
-    <div class="main flex w-full h-screen overflow-hidden">
-      <SidebarApp />
-      <div class="flex flex-col justify-between w-full overflow-y-scroll">
-        <MainApp />
+    <div class="main flex flex-1 w-full h-full overflow-hidden">
+      <SidebarApp class=" lg:block" />
+      <div class="flex flex-col justify-center items-center w-full h-full overflow-y-scroll p-4">
+        <MainApp class="w-full h-full" />
       </div>
     </div>
-    <div class="bottom-0 pt-10">
-      <FooterApp  />
-    </div>
+    <FooterApp />
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* Ajoutez des styles personnalisés si nécessaire */
+</style>

@@ -46,75 +46,53 @@ const editCharte = (charte) => {
 </script>
 
 <template>
-  <section class="w-full h-screen flex bg-gray-100">
+  <section class="w-full min-h-screen flex flex-col lg:flex-row bg-gray-100">
     <!-- Formulaire -->
-    <div class="w-1/2 p-6 bg-white shadow-md">
-      <h2 class="text-2xl font-bold mb-4">Créer une Charte</h2>
+    <div class="w-full lg:w-1/2 mt-20 p-4 bg-white shadow-md">
+      <h2 class="text-xl font-bold mb-4 text-[#264a67]">Créer une Charte</h2>
       <form @submit.prevent="addCharte" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium">Titre</label>
-          <input v-model="form.titre" type="text" class="w-full p-2 border rounded" placeholder="Titre" />
+        <div v-for="(label, key) in { titre: 'Titre', description: 'Description', nom: 'Nom', prenom: 'Prénom', poste: 'Poste', signature: 'Signature', id_utilisateur: 'ID Utilisateur' }" :key="key">
+          <label :for="key" class="block text-sm font-medium">{{ label }}</label>
+          <input v-model="form[key]" :id="key" :type="key === 'description' ? 'textarea' : 'text'" class="w-full p-2 border rounded" :placeholder="label" />
         </div>
-        <div>
-          <label class="block text-sm font-medium">Description</label>
-          <textarea v-model="form.description" class="w-full p-2 border rounded" placeholder="Description"></textarea>
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Nom</label>
-          <input v-model="form.nom" type="text" class="w-full p-2 border rounded" placeholder="Nom" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Prénom</label>
-          <input v-model="form.prenom" type="text" class="w-full p-2 border rounded" placeholder="Prénom" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Poste</label>
-          <input v-model="form.poste" type="text" class="w-full p-2 border rounded" placeholder="Poste" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">Signature</label>
-          <input v-model="form.signature" type="text" class="w-full p-2 border rounded" placeholder="Signature" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium">ID Utilisateur</label>
-          <input v-model="form.id_utilisateur" type="text" class="w-full p-2 border rounded" placeholder="ID Utilisateur" />
-        </div>
-        <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Ajouter</button>
+        <button type="submit" class="w-full bg-[#264a67] text-white p-2 rounded hover:bg-[#1e3a56]">Ajouter</button>
       </form>
     </div>
 
     <!-- Tableau -->
-    <div class="w-1/2 p-6">
-      <h2 class="text-2xl font-bold mb-4">Liste des Chartes</h2>
-      <table class="w-full border-collapse border border-gray-300">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="border border-gray-300 p-2">Titre</th>
-            <th class="border border-gray-300 p-2">Description</th>
-            <th class="border border-gray-300 p-2">Nom</th>
-            <th class="border border-gray-300 p-2">Prénom</th>
-            <th class="border border-gray-300 p-2">Poste</th>
-            <th class="border border-gray-300 p-2">Signature</th>
-            <th class="border border-gray-300 p-2">ID Utilisateur</th>
-            <th class="border border-gray-300 p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="charte in chartes" :key="charte.id" class="odd:bg-gray-100 even:bg-white">
-            <td class="border border-gray-300 p-2">{{ charte.titre }}</td>
-            <td class="border border-gray-300 p-2">{{ charte.description }}</td>
-            <td class="border border-gray-300 p-2">{{ charte.nom }}</td>
-            <td class="border border-gray-300 p-2">{{ charte.prenom }}</td>
-            <td class="border border-gray-300 p-2">{{ charte.poste }}</td>
-            <td class="border border-gray-300 p-2">{{ charte.signature }}</td>
-            <td class="border border-gray-300 p-2">{{ charte.id_utilisateur }}</td>
-            <td class="border border-gray-300 p-2 space-x-2">
-              <button @click="editCharte(charte)" class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">Modifier</button>
-              <button @click="deleteCharte(charte.id)" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Supprimer</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="w-full lg:w-1/2 mt-20 p-4">
+      <h2 class="text-xl font-bold mb-4 text-[#264a67]">Liste des Chartes</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-gray-300 text-sm">
+          <thead>
+            <tr class="bg-[#264a67] text-white">
+              <th class="border border-gray-300 p-2">Titre</th>
+              <th class="border border-gray-300 p-2">Description</th>
+              <th class="border border-gray-300 p-2">Nom</th>
+              <th class="border border-gray-300 p-2">Prénom</th>
+              <th class="border border-gray-300 p-2">Poste</th>
+              <th class="border border-gray-300 p-2">Signature</th>
+              <th class="border border-gray-300 p-2">ID Utilisateur</th>
+              <th class="border border-gray-300 p-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="charte in chartes" :key="charte.id" class="odd:bg-gray-100 even:bg-white">
+              <td class="border border-gray-300 p-2">{{ charte.titre }}</td>
+              <td class="border border-gray-300 p-2">{{ charte.description }}</td>
+              <td class="border border-gray-300 p-2">{{ charte.nom }}</td>
+              <td class="border border-gray-300 p-2">{{ charte.prenom }}</td>
+              <td class="border border-gray-300 p-2">{{ charte.poste }}</td>
+              <td class="border border-gray-300 p-2">{{ charte.signature }}</td>
+              <td class="border border-gray-300 p-2">{{ charte.id_utilisateur }}</td>
+              <td class="border border-gray-300 p-2 space-x-2">
+                <button @click="editCharte(charte)" class="bg-[#264a67] text-white px-2 py-1 rounded hover:bg-[#1e3a56]">Modifier</button>
+                <button @click="deleteCharte(charte.id)" class="bg-[#dc3545] text-white px-2 py-1 rounded hover:bg-red-700">Supprimer</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 </template>
