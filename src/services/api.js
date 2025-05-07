@@ -103,11 +103,31 @@ export const updateUserInfos = (userId, userData) => {
 // ====================================
 // ==== AUTHENTIFICATION =============
 // ====================================
-
 // Inscription d'un nouvel utilisateur
-export const registerUser = (userData) => {
-  return axios.post(`${apiUrl}/auth/register`, userData);
+export const registerUser = async (userData) => {
+  try {
+    const response = await axios.post(`${apiUrl}/auth/register`, userData);
+
+    const confirmationToken = response.data?.token_confirmation_email;
+    if (confirmationToken) {
+      console.log('Token de confirmation reçu :', confirmationToken);
+
+      // ✅ Vérifie automatiquement le compte après inscription
+      await axios.post(`${apiUrl}/auth/verify`, null, {
+        params: { token: confirmationToken },
+      });
+      console.log('Compte vérifié avec succès après inscription');
+    } else {
+      console.warn('Aucun token de confirmation reçu.');
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.response?.data || error.message);
+    throw error;
+  }
 };
+
 // Connexion d'un utilisateur (email ou username détecté automatiquement)
 export const loginUser = async (loginInput, password) => {
   const isEmail = loginInput.includes('@');

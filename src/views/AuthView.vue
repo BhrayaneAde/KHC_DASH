@@ -1,11 +1,10 @@
 <template>
   <div class="h-screen flex justify-center items-center bg-[#264a67]">
-    <div
-      class="w-full max-w-6xl flex flex-col md:flex-row justify-center items-center bg-gradient-to-b from-white to-[#264a67] shadow-xl h-full md:h-[80%] rounded-2xl">
+    <div class="w-full max-w-6xl flex flex-col md:flex-row justify-center items-center bg-gradient-to-b from-white to-[#264a67] shadow-xl h-full md:h-[80%] rounded-2xl">
 
       <!-- Section Logo -->
       <section class="flex items-center justify-center w-full md:w-1/2 h-[30%] md:h-full bg-white md:rounded-l-2xl">
-        <img class="w-40 md:w-60 lg:w-96" src="../assets/image/khc.jfif" alt="Logo phonéos">
+        <img class="w-40 md:w-60 lg:w-96" src="@/assets/image/khc.jfif" alt="Logo phonéos">
       </section>
 
       <!-- Section Formulaire -->
@@ -14,92 +13,85 @@
           {{ isLogin ? 'Connexion' : 'Inscription' }}
         </h1>
 
-        <form @submit.prevent="isLogin ? login() : register()" class="flex flex-col items-center gap-4">
+        <form @submit.prevent="isLogin ? handleLogin() : handleRegister()" class="flex flex-col items-center gap-4">
           <template v-if="isLogin">
-            <!-- FORMULAIRE DE CONNEXION -->
             <div class="w-full md:w-80 lg:w-96">
-              <label for="username" class="text-white font-semibold mb-1 block">Nom d'utilisateur</label>
+              <label class="text-white font-semibold mb-1 block">Nom d'utilisateur</label>
               <div class="flex items-center bg-[#CBD5E1] rounded-md">
-                <img src="../assets/image/user.svg" alt="Icône utilisateur" class="w-8 md:w-10 p-2">
-                <input v-model="loginInput" id="username" type="text" placeholder="Entrez votre identifiant"
-                  class="flex-1 bg-transparent p-2 focus:outline-none" required />
+                <img src="@/assets/image/user.svg" alt="user" class="w-8 md:w-10 p-2">
+                <input v-model="loginInput" type="text" placeholder="Entrez votre identifiant"
+                       class="flex-1 bg-transparent p-2 focus:outline-none" required />
               </div>
             </div>
 
             <div class="w-full md:w-80 lg:w-96">
-              <label for="password" class="text-white font-semibold mb-1 block">Mot de passe</label>
+              <label class="text-white font-semibold mb-1 block">Mot de passe</label>
               <div class="flex items-center bg-[#CBD5E1] rounded-md">
-                <img src="../assets/image/password.svg" alt="Icône mot de passe" class="w-8 md:w-10 p-2">
-                <input v-model="passwordInput" id="password" type="password" placeholder="Entrez votre mot de passe"
-                  class="flex-1 bg-transparent p-2 focus:outline-none" required />
+                <img src="@/assets/image/password.svg" alt="password" class="w-8 md:w-10 p-2">
+                <input v-model="passwordInput" type="password" placeholder="Entrez votre mot de passe"
+                       class="flex-1 bg-transparent p-2 focus:outline-none" required />
               </div>
             </div>
           </template>
 
           <template v-else>
-            <!-- FORMULAIRE D'INSCRIPTION -->
             <div class="w-full md:w-80 lg:w-96">
               <label class="text-white font-semibold mb-1 block">Nom d'utilisateur</label>
-              <input v-model="username" type="text" placeholder="Choisissez un identifiant"
-                class="w-full bg-[#CBD5E1] p-2 rounded-md focus:outline-none" required />
+              <input v-model="username" type="text" placeholder="Identifiant"
+                     class="w-full bg-[#CBD5E1] p-2 rounded-md" required />
             </div>
 
             <div class="w-full md:w-80 lg:w-96">
               <label class="text-white font-semibold mb-1 block">Email</label>
               <input v-model="email" type="email" placeholder="Votre email"
-                class="w-full bg-[#CBD5E1] p-2 rounded-md focus:outline-none" required />
+                     class="w-full bg-[#CBD5E1] p-2 rounded-md" required />
             </div>
 
             <div class="w-full md:w-80 lg:w-96">
               <label class="text-white font-semibold mb-1 block">Téléphone</label>
               <input v-model="telephone" type="text" placeholder="Votre téléphone"
-                class="w-full bg-[#CBD5E1] p-2 rounded-md focus:outline-none" required />
+                     class="w-full bg-[#CBD5E1] p-2 rounded-md" required />
             </div>
 
             <div class="w-full md:w-80 lg:w-96">
               <label class="text-white font-semibold mb-1 block">Mot de passe</label>
-              <input v-model="password" type="password" placeholder="Créez un mot de passe"
-                class="w-full bg-[#CBD5E1] p-2 rounded-md focus:outline-none" required />
+              <input v-model="password" type="password" placeholder="Mot de passe"
+                     class="w-full bg-[#CBD5E1] p-2 rounded-md" required />
             </div>
 
             <div class="w-full md:w-80 lg:w-96">
               <label class="text-white font-semibold mb-1 block">Titre (optionnel)</label>
-              <input v-model="titre" type="text" placeholder="Votre titre (ex: Chauffeur, Manager...)"
-                class="w-full bg-[#CBD5E1] p-2 rounded-md focus:outline-none" />
+              <input v-model="titre" type="text" placeholder="Titre"
+                     class="w-full bg-[#CBD5E1] p-2 rounded-md" />
             </div>
 
             <div class="w-full md:w-80 lg:w-96">
               <label class="text-white font-semibold mb-1 block">Motivation (optionnel)</label>
               <textarea v-model="motivation" placeholder="Décrivez vos motivations"
-                class="w-full bg-[#CBD5E1] p-2 rounded-md focus:outline-none" rows="3"></textarea>
+                        class="w-full bg-[#CBD5E1] p-2 rounded-md" rows="3"></textarea>
             </div>
           </template>
 
-          <!-- Message d'erreur -->
           <p v-if="errorMessage" class="text-[#dc3545] text-center text-sm mt-2">{{ errorMessage }}</p>
 
-          <!-- Bouton submit -->
           <button type="submit"
-            class="bg-[#c6d5f541] hover:bg-[#7a8bad] text-white font-semibold py-2 px-6 rounded-md mt-4">
+                  class="bg-[#c6d5f541] hover:bg-[#7a8bad] text-white font-semibold py-2 px-6 rounded-md mt-4">
             {{ isLogin ? 'Se connecter' : "S'inscrire" }}
           </button>
 
-          <!-- Lien basculer entre login/register -->
-          <p class="text-white mt-4 cursor-pointer underline" @click="isLogin = !isLogin">
+          <p class="text-white mt-4 cursor-pointer underline" @click="toggleAuthMode">
             {{ isLogin ? "Pas encore de compte ? Inscrivez-vous" : "Déjà inscrit ? Connectez-vous" }}
           </p>
         </form>
       </section>
-
     </div>
   </div>
 </template>
 
-
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginUser, registerUser } from '@/services/api.js' // On importe l'API propre
+import { loginUser, registerUser } from '@/services/api.js'
 
 const isLogin = ref(true)
 const loginInput = ref('')
@@ -107,7 +99,7 @@ const passwordInput = ref('')
 const errorMessage = ref('')
 const router = useRouter()
 
-// Formulaire d'inscription
+// Champs inscription
 const username = ref('')
 const email = ref('')
 const telephone = ref('')
@@ -115,34 +107,25 @@ const password = ref('')
 const titre = ref('')
 const motivation = ref('')
 
-// Fonction login
-async function login() {
+// Basculer entre connexion et inscription
+function toggleAuthMode() {
+  isLogin.value = !isLogin.value
+  errorMessage.value = ''
+}
+
+// Connexion
+async function handleLogin() {
   try {
-    const response = await loginUser(loginInput.value, passwordInput.value);
-
-    errorMessage.value = '';
-
-    // Redirection vers la page admin
-    router.push('/admin');
-
-    // Reset les champs
-    loginInput.value = '';
-    passwordInput.value = '';
+    await loginUser(loginInput.value, passwordInput.value)
+    errorMessage.value = ''
+    router.push('/admin')
   } catch (error) {
-    console.error(error);
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMessage.value = error.response.data.message;
-    } else {
-      errorMessage.value = 'Erreur de connexion.';
-    }
+    errorMessage.value = error.response?.data?.message || 'Erreur de connexion.'
   }
 }
 
-
-/**
- * Fonction pour s'inscrire
- */
-async function register() {
+// Inscription
+async function handleRegister() {
   const payload = {
     username: username.value,
     email: email.value,
@@ -155,25 +138,43 @@ async function register() {
   }
 
   try {
-    await registerUser(payload)
+    const response = await registerUser(payload)
 
-    alert('Compte créé avec succès ! Connectez-vous.')
-    isLogin.value = true
+    if (response) {
+      username.value = ''
+      email.value = ''
+      telephone.value = ''
+      password.value = ''
+      titre.value = ''
+      motivation.value = ''
 
-    // Reset les champs
-    username.value = ''
-    email.value = ''
-    telephone.value = ''
-    password.value = ''
-    titre.value = ''
-    motivation.value = ''
-  } catch (error) {
-    console.error(error)
-    if (error.response && error.response.data && error.response.data.message) {
-      errorMessage.value = error.response.data.message
-    } else {
-      errorMessage.value = 'Erreur lors de l\'inscription.'
+      alert('Compte créé et vérifié avec succès ! Vous pouvez maintenant vous connecter.')
+      toggleAuthMode() // Passer à l'écran de connexion
     }
+  } catch (error) {
+    errorMessage.value = error.response?.data?.message || 'Erreur lors de l\'inscription.'
   }
 }
 </script>
+
+<style scoped>
+.backdrop-blur {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+@keyframes popupFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.popup-animation {
+  animation: popupFadeIn 0.3s ease-out forwards;
+}
+</style>
