@@ -47,7 +47,7 @@ const getAuthHeaders = () => {
 
 // 1. Récupérer tous les utilisateurs
 export const getUsers = () => {
-  return axios.get(`${apiUrl}/admin`, getAuthHeaders());
+  return axios.get(`${apiUrl}/admin/get_all`, getAuthHeaders());
 };
 
 // 2. Suspendre un utilisateur par ID
@@ -128,40 +128,41 @@ export const registerUser = async (userData) => {
   }
 };
 
-// Connexion d'un utilisateur (email ou username détecté automatiquement)
+
 export const loginUser = async (loginInput, password) => {
-  const isEmail = loginInput.includes('@');
+  const isEmail = loginInput.includes('@')
   const url = isEmail
     ? `${apiUrl}/auth/login_with_email`
-    : `${apiUrl}/auth/login_with_username`;
+    : `${apiUrl}/auth/login_with_username`
 
-  const formData = new FormData();
-  formData.append('grant_type', 'password');
-  formData.append('username', loginInput);  // Username ou email géré côté backend
-  formData.append('password', password);
-  formData.append('scope', '');
-  formData.append('client_id', 'string');
-  formData.append('client_secret', 'string');
+  const formData = new FormData()
+  formData.append('grant_type', 'password')
+  formData.append('username', loginInput)
+  formData.append('password', password)
+  formData.append('scope', '')
+  formData.append('client_id', 'string')
+  formData.append('client_secret', 'string')
 
   try {
     const response = await axios.post(url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-    });
+    })
 
-    // Sauvegarde cohérente du token dans localStorage
-    localStorage.setItem('access_token', response.data.access_token);
-    
-    console.log('Connexion réussie :', response.data);
-    return response.data;
+    const data = response.data
+
+    localStorage.setItem('access_token', data.access_token)
+
+    console.log('Connexion réussie :', data)
+
+    return data // Laisse le composant décider de la redirection
 
   } catch (error) {
-    console.error('Erreur lors de la connexion :', error.response?.data || error.message);
-    throw error;
+    console.error('Erreur lors de la connexion :', error.response?.data || error.message)
+    throw error
   }
-};
-
+}
 
 // Récupérer le token d'authentification
 export const getAuthToken = () => {
@@ -174,11 +175,7 @@ export const getUserRole = () => {
 };
 
 export const logoutUser = () => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('role');
-  localStorage.removeItem('userId');
-  localStorage.removeItem('username');
-  localStorage.removeItem('email');
+  localStorage.clear();
 };
 
 // Récupérer l'utilisateur connecté

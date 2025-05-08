@@ -112,18 +112,16 @@ function toggleAuthMode() {
   isLogin.value = !isLogin.value
   errorMessage.value = ''
 }
-
 // Connexion
 async function handleLogin() {
   try {
     await loginUser(loginInput.value, passwordInput.value)
     errorMessage.value = ''
-    router.push('/admin')
+    router.push('/admin') // ✅ redirection ici
   } catch (error) {
     errorMessage.value = error.response?.data?.message || 'Erreur de connexion.'
   }
 }
-
 // Inscription
 async function handleRegister() {
   const payload = {
