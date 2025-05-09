@@ -1,6 +1,9 @@
 import axios from 'axios';
 
 const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl1 = import.meta.env.VITE_API_URL_1;
+const apiUrl2 = import.meta.env.VITE_API_URL_2
+const apiUrl3 = import.meta.env.VITE_API_URL_3
 
 // Vérifier si l'utilisateur est connecté
 export const isLoggedIn = () => {
@@ -99,6 +102,137 @@ export const getUserByUsername = (username) => {
 export const updateUserInfos = (userId, userData) => {
   return axios.patch(`${apiUrl}/admin/update_user_infos/${userId}`, userData, getAuthHeaders());
 };
+
+// =============================
+// ==== FONCTIONS POUR ADMIN CATEGORIE ===
+// =============================
+
+// Create Categorie
+
+export const createCategorie = (categorieData) => {
+  return axios.post(`${apiUrl2}/categorie/create_pub_cat`, categorieData, getAuthHeaders());
+};
+
+// Recuperer les Categorie
+export const getCategories = () => {
+  return axios.get(`${apiUrl2}/categorie/get_all_pub_cat`, getAuthHeaders());
+};
+// Recuperer une Categorie par ID
+export const getCategorieById = (id) => {
+  return axios.get(`${apiUrl2}/categorie/get_pub_cat_by_id/${id}`, getAuthHeaders());
+};
+// Update Categorie
+export const updateCategorie = (categorieId, categorieData) => {
+  return axios.put(`${apiUrl2}/categorie/update_pub_cat_by_Id/${categorieId}`, categorieData, getAuthHeaders());
+};
+
+// Delete Categorie by ID
+export const deleteCategorieBySelection = (categories, selectedId) => {
+  const categorieToDelete = categories.find(categorie => categorie.id === selectedId);
+  if (!categorieToDelete) {
+    throw new Error(`Catégorie avec l'ID ${selectedId} introuvable.`);
+  }
+
+  return deleteCategorieById(categorieToDelete.id);
+};
+
+
+// deleteCategorieById – version propre
+export const deleteCategorieById = (categorieId) => {
+  return axios.delete(`${apiUrl2}/categorie/delete_pub_cat/${categorieId}`, {
+    headers: {
+      ...getAuthHeaders().headers,  // si getAuthHeaders() retourne { headers: { ... } }
+      'Accept': 'application/json'
+    }
+  });
+};
+
+// =============================
+// ==== FONCTIONS POUR PUBLICATION ===
+// =============================
+
+// Create Publication
+export const createPublication = (formData) => {
+  return axios.post(
+    `${apiUrl2}/publication_admin/admin_create_publication`,
+    formData,
+    getAuthHeaders() // <- ici, ce doit être un objet du type { headers: { Authorization: 'Bearer ...' } }
+  );
+};
+
+// Get All Publications
+export const getAllPublications = () => {
+  return axios.get(`${apiUrl2}/publication_admin/all`, getAuthHeaders());
+};
+// Get My Publications
+export const getMyPublications = () => {
+  const userId = localStorage.getItem('user_id'); // Assuming 'user_id' is stored in localStorage
+  return axios.get(`${apiUrl2}/publication_admin/moi/${userId}`, getAuthHeaders());
+};
+
+// Update Publication
+export const updatePublication = (id, formData) => {
+  return axios.post(`${apiUrl2}/publication_admin/update_pub_by_id/${id}`, formData, {
+    headers: {
+      ...getAuthHeaders().headers,
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};
+// Restorer une Publication
+export const restorePublication = (id) => {
+  return axios.put(`${apiUrl2}/publication_admin/restore_pub/{pub_id}/${id}`, {}, getAuthHeaders());
+};
+// Delete Publication
+export const deletePublication = (id) => {
+  return axios.delete(`${apiUrl2}/publication_admin/delete_pub/${id}`, getAuthHeaders());
+};
+
+
+// =============================
+// ==== FONCTIONS POUR ADMIN APROPOS ===
+// =============================
+
+// Create Apropos
+export const createApropos = (aproposData) => {
+  return axios.post(`${apiUrl1}/create_a_propos`, aproposData, getAuthHeaders());
+};
+
+// Get All Apropos
+export const getAllApropos = () => {
+  return axios.get(`${apiUrl1}/get_all_a_propos`, getAuthHeaders());
+};
+
+// Get Apropos By ID
+export const getAproposById = (id) => {
+  return axios.get(`${apiUrl1}/get_a_propos_by/${id}`, getAuthHeaders());
+};
+
+// Update Apropos
+export const updateApropos = (id, aproposData) => {
+  return axios.put(`${apiUrl1}/update_a_propos/${id}`, aproposData, getAuthHeaders());
+};
+
+// Activate Apropos
+export const activateApropos = (id) => {
+  return axios.put(`${apiUrl1}/activate_a_propos/${id}`, {}, getAuthHeaders());
+};
+
+// Deactivate Apropos
+export const deactivateApropos = (id) => {
+  return axios.put(`${apiUrl1}/desactivate_a_propos/${id}`, {}, getAuthHeaders());
+};
+
+// Delete Apropos
+export const deleteApropos = (id) => {
+  return axios.delete(`${apiUrl1}/delete_a_propos/${id}`, getAuthHeaders());
+};
+
+// Get Active Apropos
+export const getActiveApropos = () => {
+  return axios.get(`${apiUrl1}/actif`, getAuthHeaders());
+};
+
 
 // ====================================
 // ==== AUTHENTIFICATION =============

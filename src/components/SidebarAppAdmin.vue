@@ -1,11 +1,8 @@
 <script setup>
-import AnnotatorInterface from '@/views/annotatorInterface.vue';
-import Evaluation from '@/views/evaluation.vue';
+
 import { ref } from 'vue';
 
 // Contrôlent l'ouverture des sous-menus
-const openAnnotateurs = ref(false);
-const openParametre = ref(false);
 const openEvaluateur = ref(false);
 
 // Contrôle l'ouverture du menu burger
@@ -72,16 +69,16 @@ const isSidebarOpen = ref(false);
 
         <transition name="fade-slide">
           <div v-if="openEvaluateur" class="ml-6 mt-2 flex flex-col gap-3">
-            <router-link to="/evaluateur" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
+            <router-link to="/CreateCategorie" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
               Catégorie
             </router-link>
-            <router-link to="/globale" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
+            <router-link to="/CreationPublication" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
               Publications
             </router-link>
-            <router-link to="/statistique" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
+            <router-link to="/CreationCharte" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
               Chartes
             </router-link>
-            <router-link to="/users" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
+            <router-link to="/AllUtilisateursAdmin" class="text-md text-gray-300 hover:text-white flex items-center gap-4">
               Utilisateurs
             </router-link>
           </div>

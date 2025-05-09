@@ -1,8 +1,8 @@
 <script setup>
-import HeaderApp from '@/components/HeaderApp.vue';
-import SidebarApp from '@/components/SidebarApp.vue';
+import HeaderApp from '@/components/HeaderAppAdmin.vue';
+import SidebarApp from '@/components/SidebarAppAdmin.vue';
 import MainApp from '@/components/MainApp.vue';
-import FooterApp from '@/components/FooterApp.vue';
+import FooterApp from '@/components/FooterAppAdmin.vue';
 </script>
 
 <template>

@@ -11,33 +11,33 @@
     <div class="mb-6">
       <h2 class="text-xl font-semibold mb-2">Utilisateurs Actifs</h2>
       <table class="table-auto w-full border-collapse border border-gray-300">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-4 py-2">ID</th>
-            <th class="border border-gray-300 px-4 py-2">Nom</th>
-            <th class="border border-gray-300 px-4 py-2">Email</th>
-            <th class="border border-gray-300 px-4 py-2">Téléphone</th>
-            <th class="border border-gray-300 px-4 py-2">Statut</th>
-            <th class="border border-gray-300 px-4 py-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in activeUsers" :key="user.id">
-            <td class="border border-gray-300 px-4 py-2">{{ user.id }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ user.nom }} {{ user.prenoms }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ user.email }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ user.telephone }}</td>
-            <td class="border border-gray-300 px-4 py-2">{{ user.statut }}</td>
-            <td class="border border-gray-300 px-4 py-2">
-              <button class="bg-yellow-500 text-white px-3 py-1 rounded mr-2" @click="handleSuspendUser(user.id)">
-                Suspendre
-              </button>
-              <button class="bg-red-500 text-white px-3 py-1 rounded" @click="handleDeleteUser(user.id)">
-                Supprimer
-              </button>
-            </td>
-          </tr>
-        </tbody>
+      <thead>
+        <tr class="bg-gray-100">
+        <th class="border border-gray-300 px-4 py-2">ID</th>
+        <th class="border border-gray-300 px-4 py-2">Nom</th>
+        <th class="border border-gray-300 px-4 py-2">Email</th>
+        <th class="border border-gray-300 px-4 py-2">Téléphone</th>
+        <th class="border border-gray-300 px-4 py-2">Statut</th>
+        <th class="border border-gray-300 px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in activeUsers" :key="user.id">
+        <td class="border border-gray-300 px-4 py-2">{{ user.id }}</td>
+        <td class="border border-gray-300 px-4 py-2">{{ user.nom || 'N/A' }} {{ user.prenoms || 'N/A' }}</td>
+        <td class="border border-gray-300 px-4 py-2">{{ user.email }}</td>
+        <td class="border border-gray-300 px-4 py-2">{{ user.telephone }}</td>
+        <td class="border border-gray-300 px-4 py-2">{{ user.statut }}</td>
+        <td class="border border-gray-300 px-4 py-2">
+          <button class="bg-yellow-500 text-white px-3 py-1 rounded mr-2" @click="handleSuspendUser(user.id)">
+          Suspendre
+          </button>
+          <button class="bg-red-500 text-white px-3 py-1 rounded" @click="handleDeleteUser(user.id)">
+          Supprimer
+          </button>
+        </td>
+        </tr>
+      </tbody>
       </table>
     </div>
 
@@ -144,9 +144,9 @@ onMounted(() => {
 });
 
 // Filtres
-const activeUsers = computed(() => users.value.filter(user => user.statut === 'actif'));
-const suspendedUsers = computed(() => users.value.filter(user => user.statut === 'suspendu'));
-const deletedUsers = computed(() => users.value.filter(user => user.statut === 'supprimé'));
+const activeUsers = computed(() => users.value.filter(user => user.statut === 'Actif'));
+const suspendedUsers = computed(() => users.value.filter(user => user.statut === 'Suspendu'));
+const deletedUsers = computed(() => users.value.filter(user => user.statut === 'Supprimé'));
 
 // Actions
 const handleSuspendUser = async (id) => {
