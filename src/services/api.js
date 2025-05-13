@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { parseJwt } from '@/services/utils/jwt.js';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const apiUrl1 = import.meta.env.VITE_API_URL_1;
@@ -42,6 +43,14 @@ const getAuthHeaders = () => {
       Authorization: `Bearer ${token}`,
     },
   };
+};
+
+export const getUserIdFromToken = () => {
+  const token = localStorage.getItem('access_token');
+  if (!token) return null;
+
+  const decoded = parseJwt(token);
+  return decoded?.id || null; // ou 'user_id', selon ton backend
 };
 
 // =============================
@@ -127,24 +136,9 @@ export const updateCategorie = (categorieId, categorieData) => {
 };
 
 // Delete Categorie by ID
-export const deleteCategorieBySelection = (categories, selectedId) => {
-  const categorieToDelete = categories.find(categorie => categorie.id === selectedId);
-  if (!categorieToDelete) {
-    throw new Error(`Catégorie avec l'ID ${selectedId} introuvable.`);
-  }
-
-  return deleteCategorieById(categorieToDelete.id);
-};
-
-
-// deleteCategorieById – version propre
-export const deleteCategorieById = (categorieId) => {
-  return axios.delete(`${apiUrl2}/categorie/delete_pub_cat/${categorieId}`, {
-    headers: {
-      ...getAuthHeaders().headers,  // si getAuthHeaders() retourne { headers: { ... } }
-      'Accept': 'application/json'
-    }
-  });
+ 
+export const deleteCategorieById = (id) => {
+  return axios.delete(`${apiUrl2}/categorie/delete_pub_cat/${id}`, getAuthHeaders());
 };
 
 // =============================
@@ -152,13 +146,21 @@ export const deleteCategorieById = (categorieId) => {
 // =============================
 
 // Create Publication
-export const createPublication = (formData) => {
-  return axios.post(
-    `${apiUrl2}/publication_admin/admin_create_publication`,
-    formData,
-    getAuthHeaders() // <- ici, ce doit être un objet du type { headers: { Authorization: 'Bearer ...' } }
-  );
+export const createPublication = async (formData) => {
+  try {
+    const response = await axios.post(
+      `${apiUrl2}/publication_admin/admin_create_publication`,
+      formData,
+      getAuthHeaders()
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Erreur lors de la création de la publication :', error.response?.data || error.message);
+    throw error;
+  }
 };
+
+
 
 // Get All Publications
 export const getAllPublications = () => {
@@ -186,6 +188,35 @@ export const restorePublication = (id) => {
 // Delete Publication
 export const deletePublication = (id) => {
   return axios.delete(`${apiUrl2}/publication_admin/delete_pub/${id}`, getAuthHeaders());
+};
+
+// ==============================
+// ==== FONCTIONS POUR ADMIN CHARTE ===
+// ==============================
+
+// Create Charte
+export const createCharte = (data) => {
+  return axios.post(`${apiUrl3}/manage_charte/create_charte`, data, getAuthHeaders());
+};
+
+// Get All Chartes
+export const getAllChartes = () => {
+  return axios.get(`${apiUrl3}/manage_charte/get_all_charte`, getAuthHeaders());
+};
+
+// Get Charte By ID
+export const getCharteById = (id) => {
+  return axios.get(`${apiUrl3}/manage_charte/get_charte_by_id/${id}`, getAuthHeaders());
+};
+
+// Update Charte
+export const updateCharte = (id, data) => {
+  return axios.put(`${apiUrl3}/manage_charte/update_charte/${id}`, data, getAuthHeaders());
+};
+
+// Delete Charte
+export const deleteCharte = (id) => {
+  return axios.delete(`${apiUrl3}/manage_charte/delete_charte/${id}`, getAuthHeaders());
 };
 
 

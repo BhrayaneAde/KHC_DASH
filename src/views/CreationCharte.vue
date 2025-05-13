@@ -1,7 +1,14 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getUserIdFromToken } from '@/services/api.js'
+import {
+  createCharte,
+  getAllChartes,
+  updateCharte,
+  deleteCharte
+} from '@/services/api.js'
 
-const chartes = ref([]) // Liste des chartes
+// Formulaire
 const form = ref({
   titre: '',
   description: '',
@@ -9,14 +16,40 @@ const form = ref({
   prenom: '',
   poste: '',
   signature: '',
-  id_utilisateur: '',
+  id_utilisateur: getUserIdFromToken()
 })
 
-// Ajouter une charte
-const addCharte = () => {
-  if (form.value.titre && form.value.description && form.value.nom && form.value.prenom && form.value.poste && form.value.signature && form.value.id_utilisateur) {
-    chartes.value.push({ ...form.value, id: Date.now() })
+const chartes = ref([])
+const isEditing = ref(false)
+const editingId = ref(null)
+
+// Charger les données au démarrage
+onMounted(async () => {
+  await fetchChartes()
+})
+
+// Récupérer la liste
+const fetchChartes = async () => {
+  try {
+    const res = await getAllChartes()
+    chartes.value = res.data
+  } catch (err) {
+    console.error("Erreur lors du chargement des chartes :", err)
+  }
+}
+
+// Ajouter ou modifier une charte
+const addCharte = async () => {
+  try {
+    if (isEditing.value) {
+      await updateCharte(editingId.value, form.value)
+    } else {
+      await createCharte(form.value)
+    }
+    await fetchChartes()
     resetForm()
+  } catch (err) {
+    console.error("Erreur lors de l'envoi :", err)
   }
 }
 
@@ -29,19 +62,35 @@ const resetForm = () => {
     prenom: '',
     poste: '',
     signature: '',
-    id_utilisateur: '',
+    id_utilisateur: getUserIdFromToken()
   }
+  isEditing.value = false
+  editingId.value = null
 }
 
-// Supprimer une charte
-const deleteCharte = (id) => {
-  chartes.value = chartes.value.filter((charte) => charte.id !== id)
-}
-
-// Modifier une charte
+// Préparer la modification
 const editCharte = (charte) => {
-  form.value = { ...charte }
-  deleteCharte(charte.id)
+  form.value = {
+    titre: charte.titre,
+    description: charte.description,
+    nom: charte.nom,
+    prenom: charte.prenom,
+    poste: charte.poste,
+    signature: charte.signature,
+    id_utilisateur: getUserIdFromToken() // Remplace par celui du token actuel
+  }
+  isEditing.value = true
+  editingId.value = charte.id
+}
+
+// Supprimer
+const deleteCharteApi = async (id) => {
+  try {
+    await deleteCharte(id)
+    await fetchChartes()
+  } catch (err) {
+    console.error("Erreur lors de la suppression :", err)
+  }
 }
 </script>
 
@@ -49,17 +98,48 @@ const editCharte = (charte) => {
   <section class="w-full min-h-screen flex flex-col lg:flex-row bg-gray-100">
     <!-- Formulaire -->
     <div class="w-full lg:w-1/2 mt-20 p-4 bg-white shadow-md">
-      <h2 class="text-xl font-bold mb-4 text-[#264a67]">Créer une Charte</h2>
+      <h2 class="text-xl font-bold mb-4 text-[#264a67]">
+        {{ isEditing ? 'Modifier une Charte' : 'Créer une Charte' }}
+      </h2>
       <form @submit.prevent="addCharte" class="space-y-4">
-        <div v-for="(label, key) in { titre: 'Titre', description: 'Description', nom: 'Nom', prenom: 'Prénom', poste: 'Poste', signature: 'Signature', id_utilisateur: 'ID Utilisateur' }" :key="key">
-          <label :for="key" class="block text-sm font-medium">{{ label }}</label>
-          <input v-model="form[key]" :id="key" :type="key === 'description' ? 'textarea' : 'text'" class="w-full p-2 border rounded" :placeholder="label" />
+        <!-- Titre -->
+        <div>
+          <label for="titre" class="block text-sm font-medium">Titre</label>
+          <input v-model="form.titre" id="titre" type="text" class="w-full p-2 border rounded" placeholder="Titre" />
         </div>
-        <button type="submit" class="w-full bg-[#264a67] text-white p-2 rounded hover:bg-[#1e3a56]">Ajouter</button>
+        <!-- Description -->
+        <div>
+          <label for="description" class="block text-sm font-medium">Description</label>
+          <textarea v-model="form.description" id="description" class="w-full p-2 border rounded" placeholder="Description"></textarea>
+        </div>
+        <!-- Nom -->
+        <div>
+          <label for="nom" class="block text-sm font-medium">Nom</label>
+          <input v-model="form.nom" id="nom" type="text" class="w-full p-2 border rounded" placeholder="Nom" />
+        </div>
+        <!-- Prénom -->
+        <div>
+          <label for="prenom" class="block text-sm font-medium">Prénom</label>
+          <input v-model="form.prenom" id="prenom" type="text" class="w-full p-2 border rounded" placeholder="Prénom" />
+        </div>
+        <!-- Poste -->
+        <div>
+          <label for="poste" class="block text-sm font-medium">Poste</label>
+          <input v-model="form.poste" id="poste" type="text" class="w-full p-2 border rounded" placeholder="Poste" />
+        </div>
+        <!-- Signature -->
+        <div>
+          <label for="signature" class="block text-sm font-medium">Signature</label>
+          <input v-model="form.signature" id="signature" type="text" class="w-full p-2 border rounded" placeholder="Signature" />
+        </div>
+
+        <button type="submit" class="w-full bg-[#264a67] text-white p-2 rounded hover:bg-[#1e3a56]">
+          {{ isEditing ? 'Mettre à jour' : 'Ajouter' }}
+        </button>
       </form>
     </div>
 
-    <!-- Tableau -->
+    <!-- Liste des chartes -->
     <div class="w-full lg:w-1/2 mt-20 p-4">
       <h2 class="text-xl font-bold mb-4 text-[#264a67]">Liste des Chartes</h2>
       <div class="overflow-x-auto">
@@ -86,8 +166,12 @@ const editCharte = (charte) => {
               <td class="border border-gray-300 p-2">{{ charte.signature }}</td>
               <td class="border border-gray-300 p-2">{{ charte.id_utilisateur }}</td>
               <td class="border border-gray-300 p-2 space-x-2">
-                <button @click="editCharte(charte)" class="bg-[#264a67] text-white px-2 py-1 rounded hover:bg-[#1e3a56]">Modifier</button>
-                <button @click="deleteCharte(charte.id)" class="bg-[#dc3545] text-white px-2 py-1 rounded hover:bg-red-700">Supprimer</button>
+                <button @click="editCharte(charte)" class="bg-[#264a67] text-white px-2 py-1 rounded hover:bg-[#1e3a56]">
+                  Modifier
+                </button>
+                <button @click="deleteCharteApi(charte.id)" class="bg-[#dc3545] text-white px-2 py-1 rounded hover:bg-red-700">
+                  Supprimer
+                </button>
               </td>
             </tr>
           </tbody>
@@ -98,5 +182,5 @@ const editCharte = (charte) => {
 </template>
 
 <style scoped>
-/* Ajoutez des styles personnalisés si nécessaire */
+/* Vous pouvez ajouter des styles supplémentaires ici si nécessaire */
 </style>

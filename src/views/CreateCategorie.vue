@@ -6,7 +6,6 @@ import {
   getCategories, 
   updateCategorie, 
   deleteCategorieById, 
-  deleteCategorieBySelection 
 } from '@/services/api.js'
 
 const categories = ref([])
@@ -67,15 +66,6 @@ const deleteCategoryById = async (id) => {
   }
 }
 
-const deleteCategoryBySelection = async (selectedId) => {
-  try {
-    await deleteCategorieBySelection(categories.value, selectedId)
-    categories.value = categories.value.filter(category => category.id !== selectedId)
-  } catch (error) {
-    console.error('Erreur lors de la suppression de la catégorie par sélection:', error)
-  }
-}
-
 const editCategory = (category) => {
   newCategory.value = { ...category }
 }
@@ -133,6 +123,7 @@ onMounted(() => {
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Titre</th>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
             <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
@@ -140,6 +131,7 @@ onMounted(() => {
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-for="category in categories" :key="category.id">
+            <td class="px-6 py-4 text-sm text-gray-900">{{ category.id }}</td>
             <td class="px-6 py-4 text-sm text-gray-900">{{ category.titre }}</td>
             <td class="px-6 py-4 text-sm text-gray-500">
               <div v-html="category.description"></div>
